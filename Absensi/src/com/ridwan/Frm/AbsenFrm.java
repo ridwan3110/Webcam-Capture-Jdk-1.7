@@ -1,0 +1,384 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.ridwan.Frm;
+
+import com.ridwan.Dao.AbsenDao;
+import com.ridwan.Dao.UserDAo;
+import com.ridwan.Model.UserModel;
+import java.util.List;
+import org.bytedeco.javacpp.opencv_core.IplImage;
+import static org.bytedeco.javacpp.opencv_core.cvFlip;
+import static org.bytedeco.javacpp.opencv_highgui.cvSaveImage;
+import org.bytedeco.javacv.CanvasFrame;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.FrameGrabber;
+import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.javacv.VideoInputFrameGrabber;
+
+//youtube
+import java.io.IOException;
+import java.awt.Image;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.media.NoPlayerException;
+import javax.media.CannotRealizeException;
+import javax.media.MediaLocator;
+import javax.media.Player;
+import javax.media.Manager;
+import javax.media.control.FrameGrabbingControl;
+import javax.swing.ImageIcon;
+import javax.media.Buffer;
+import javax.media.format.VideoFormat;
+import javax.media.util.BufferToImage;
+import java.awt.image.BufferedImage;
+import java.awt.FileDialog;
+import java.io.File;
+import javax.imageio.ImageIO;
+import JImage.JIResizeImage;
+import javax.swing.JToggleButton;
+/**
+ *
+ * @author Muhammad Ridwan
+ */
+public class AbsenFrm extends javax.swing.JFrame {
+
+    private AbsenDao absenDao = new AbsenDao();
+    private UserDAo userDAo = new UserDAo();
+    
+    Player player;
+    BufferedImage bi;
+    String fn;
+    
+    
+    /**
+     * Creates new form AbsenFrm
+     */
+    public AbsenFrm() {
+        initComponents();
+        setLocationRelativeTo(null);
+        loadUser();
+        
+          
+       
+    }
+    
+    private void initCamera() throws IOException, NoPlayerException, CannotRealizeException {  
+        MediaLocator ml = new MediaLocator("vfw://0");
+        player = Manager.createRealizedPlayer(ml);
+        
+        jToggleButton2.add(player.getVisualComponent());
+        player.start();
+    }
+
+    private void setImageButton(JToggleButton tbutton, Image image) { 
+        tbutton.setIcon(new ImageIcon(image));
+    }
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public class GrabberShow implements Runnable {
+    //final int INTERVAL=1000;///you may use interval
+    IplImage image;
+    CanvasFrame canvas = new CanvasFrame("Web Cam");
+    public GrabberShow() {
+        canvas.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+    }
+    @Override
+    public void run() {
+        
+        FrameGrabber grabber = new VideoInputFrameGrabber(0); 
+        OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
+
+        int i=0;
+        try {
+            grabber.start();
+            IplImage img;
+            while (true) {
+                img = converter.convert(grabber.grab());
+//img = grabber.grab();
+                if (img != null) {
+                    cvFlip(img, img, 1);// l-r = 90_degrees_steps_anti_clockwise
+                    cvSaveImage((i++)+"-capture.jpg", img);
+                    // show image on window
+                      canvas.showImage(converter.convert(img));
+                }
+                 //Thread.sleep(INTERVAL);
+            }
+        } catch (Exception e) {
+        }
+    }
+}
+
+    
+    
+    
+    
+    public class Test implements Runnable {
+    final int INTERVAL = 100;///you may use interval
+    CanvasFrame canvas = new CanvasFrame("Web Cam");
+
+    public Test() {
+        canvas.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+    }
+
+    @Override
+    public void run() {
+
+        FrameGrabber grabber = new VideoInputFrameGrabber(0); // 1 for next camera
+        OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
+        IplImage img;
+        int i = 0;
+        try {
+            grabber.start();
+            while (true) {
+                Frame frame = grabber.grab();
+
+                img = converter.convert(frame);
+
+                //the grabbed frame will be flipped, re-flip to make it right
+                cvFlip(img, img, 1);// l-r = 90_degrees_steps_anti_clockwise
+
+                //save
+                cvSaveImage((i++) + "-aa.jpg", img);
+
+                canvas.showImage(converter.convert(img));
+
+                Thread.sleep(INTERVAL);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+   
+}
+    
+      private void loadUser(){
+        List<UserModel> userModels = userDAo.getUserModels();
+    for (UserModel um : userModels){
+        cbo_petugas.addItem(um);
+    }
+    }
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        cbo_petugas = new javax.swing.JComboBox();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        bCapture = new javax.swing.JButton();
+        bCapture2 = new javax.swing.JButton();
+        bCapture1 = new javax.swing.JButton();
+        jToggleButton1 = new javax.swing.JToggleButton();
+        jToggleButton2 = new javax.swing.JToggleButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        cbo_petugas.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        cbo_petugas.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "- PILIH -" }));
+
+        jLabel1.setFont(new java.awt.Font("Comic Sans MS", 1, 18)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Silahkan Absen");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        bCapture.setFont(new java.awt.Font("Comic Sans MS", 1, 14)); // NOI18N
+        bCapture.setText("Open Camera");
+        bCapture.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bCaptureActionPerformed(evt);
+            }
+        });
+        jPanel2.add(bCapture);
+
+        bCapture2.setFont(new java.awt.Font("Comic Sans MS", 1, 14)); // NOI18N
+        bCapture2.setText("Capture");
+        bCapture2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bCapture2ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(bCapture2);
+
+        bCapture1.setFont(new java.awt.Font("Comic Sans MS", 1, 14)); // NOI18N
+        bCapture1.setText("Save");
+        bCapture1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bCapture1ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(bCapture1);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(cbo_petugas, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addComponent(jToggleButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
+                        .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cbo_petugas, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jToggleButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(97, 97, 97))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void bCaptureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCaptureActionPerformed
+/*  FrameGrabbingControl fgc = (FrameGrabbingControl) player.getControl("javax.media.control.FrameGrabbingControl");
+        Buffer buffer = fgc.grabFrame();
+        
+        BufferToImage bti = new BufferToImage((VideoFormat) buffer.getFormat());
+        Image image = bti.createImage(buffer);
+        
+        JIResizeImage resize = new JIResizeImage();
+        bi = (BufferedImage) image;
+        Image imageresize = resize.rescale(bi, 210,220);
+        
+        this.setImageButton(this.tbWebCam, imageresize);// TODO add your handling code here:*/
+        
+        
+         try 
+        {
+            initCamera();
+        } 
+        catch (IOException ex) 
+        {
+            Logger.getLogger(AbsenFrm.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        catch (NoPlayerException ex) 
+        {
+            Logger.getLogger(AbsenFrm.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        catch (CannotRealizeException ex) 
+        {
+            Logger.getLogger(AbsenFrm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_bCaptureActionPerformed
+
+    private void bCapture1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCapture1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_bCapture1ActionPerformed
+
+    private void bCapture2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCapture2ActionPerformed
+ FrameGrabbingControl fgc = (FrameGrabbingControl) player.getControl("javax.media.control.FrameGrabbingControl");
+        Buffer buffer = fgc.grabFrame();
+        
+        BufferToImage bti = new BufferToImage((VideoFormat) buffer.getFormat());
+        Image image = bti.createImage(buffer);
+        
+        JIResizeImage resize = new JIResizeImage();
+        bi = (BufferedImage) image;
+        Image imageresize = resize.rescale(bi, 210,220);
+        
+        //this.setImageButton(this.tbCapture1, imageresize);        // TODO add your handling code here:
+    }//GEN-LAST:event_bCapture2ActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(AbsenFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(AbsenFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(AbsenFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(AbsenFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new AbsenFrm().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bCapture;
+    private javax.swing.JButton bCapture1;
+    private javax.swing.JButton bCapture2;
+    private javax.swing.JComboBox cbo_petugas;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JToggleButton jToggleButton1;
+    private javax.swing.JToggleButton jToggleButton2;
+    // End of variables declaration//GEN-END:variables
+}
